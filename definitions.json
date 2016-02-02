@@ -1,0 +1,1198 @@
+[
+    {
+        "code": "T0",
+        "definition": "Select Tool 0"
+    },
+    {
+        "code": "T1",
+        "definition": "Select Tool 1"
+    },
+    {
+        "code": "T2",
+        "definition": "Select Tool 2"
+    },
+    {
+        "code": "N",
+        "definition": "Line number"
+    },
+    {
+        "code": "*",
+        "definition": "Checksum"
+    },
+    {
+        "code": "G0",
+        "definition": "Rapid linear Move"
+    },
+    {
+        "code": "G1",
+        "definition": "Linear Move"
+    },
+    {
+        "code": "G2",
+        "definition": "Controlled Arc Move"
+    },
+    {
+        "code": "G3",
+        "definition": "Controlled Arc Move"
+    },
+    {
+        "code": "G4",
+        "definition": "Dwell"
+    },
+    {
+        "code": "G10",
+        "definition": "Tool Offset"
+    },
+    {
+        "code": "G10",
+        "definition": "Retract"
+    },
+    {
+        "code": "G11",
+        "definition": "Unretract"
+    },
+    {
+        "code": "G17",
+        "definition": "Plane Selection (CNC specific)"
+    },
+    {
+        "code": "G18",
+        "definition": "Plane Selection (CNC specific)"
+    },
+    {
+        "code": "G19",
+        "definition": "Plane Selection (CNC specific)"
+    },
+    {
+        "code": "G20",
+        "definition": "Set Units to Inches"
+    },
+    {
+        "code": "G21",
+        "definition": "Set Units to Millimeters"
+    },
+    {
+        "code": "G22",
+        "definition": "Firmware controlled Retract/Precharge"
+    },
+    {
+        "code": "G23",
+        "definition": "Firmware controlled Retract/Precharge"
+    },
+    {
+        "code": "G28",
+        "definition": "Move to Origin (optional: on specified axis)"
+    },
+    {
+        "code": "G29",
+        "definition": "Detailed Z-Probe"
+    },
+    {
+        "code": "G29.1",
+        "definition": "Set Z probe head offset"
+    },
+    {
+        "code": "G29.2",
+        "definition": "Set Z probe head offset calculated from toolhead position"
+    },
+    {
+        "code": "G30",
+        "definition": "Single Z-Probe"
+    },
+    {
+        "code": "G31",
+        "definition": "Set or Report Current Probe status"
+    },
+    {
+        "code": "G32",
+        "definition": "Probe Z and calculate Z plane"
+    },
+    {
+        "code": "G31",
+        "definition": "Dock Z Probe sled"
+    },
+    {
+        "code": "G32",
+        "definition": "Undock Z Probe sled"
+    },
+    {
+        "code": "G38.x",
+        "definition": "Straight Probe (CNC specific)"
+    },
+    {
+        "code": "G38.2",
+        "definition": "probe toward workpiece, stop on contact, signal error if failure"
+    },
+    {
+        "code": "G38.3",
+        "definition": "probe toward workpiece, stop on contact"
+    },
+    {
+        "code": "G38.4",
+        "definition": "probe away from workpiece, stop on loss of contact, signal error if failure"
+    },
+    {
+        "code": "G38.5",
+        "definition": "probe away from workpiece, stop on loss of contact"
+    },
+    {
+        "code": "G40",
+        "definition": "Compensation Off (CNC specific)"
+    },
+    {
+        "code": "G54",
+        "definition": "Coordinate System Select (CNC specific)"
+    },
+    {
+        "code": "G55",
+        "definition": "Coordinate System Select (CNC specific)"
+    },
+    {
+        "code": "G56",
+        "definition": "Coordinate System Select (CNC specific)"
+    },
+    {
+        "code": "G57",
+        "definition": "Coordinate System Select (CNC specific)"
+    },
+    {
+        "code": "G58",
+        "definition": "Coordinate System Select (CNC specific)"
+    },
+    {
+        "code": "G59",
+        "definition": "Coordinate System Select (CNC specific)"
+    },
+    {
+        "code": "G80",
+        "definition": "Cancel Canned Cycle (CNC specific)"
+    },
+    {
+        "code": "G90",
+        "definition": "Set to Absolute Positioning"
+    },
+    {
+        "code": "G91",
+        "definition": "Set to Relative Positioning"
+    },
+    {
+        "code": "G91.x",
+        "definition": "Reset Coordinate System Offsets (CNC specific)"
+    },
+    {
+        "code": "G92",
+        "definition": "Set Position"
+    },
+    {
+        "code": "G93",
+        "definition": "Feed Rate Mode (Inverse Time Mode) (CNC specific)"
+    },
+    {
+        "code": "G94",
+        "definition": "Feed Rate Mode (Units per Minute) (CNC specific)"
+    },
+    {
+        "code": "G100",
+        "definition": "Calibrate floor or rod radius"
+    },
+    {
+        "code": "G130",
+        "definition": "Set digital potentiometer value"
+    },
+    {
+        "code": "G131",
+        "definition": "Remove offset"
+    },
+    {
+        "code": "G132",
+        "definition": "Calibrate endstop offsets"
+    },
+    {
+        "code": "G133",
+        "definition": "Measure steps to top"
+    },
+    {
+        "code": "G161",
+        "definition": "Home axes to minimum"
+    },
+    {
+        "code": "G162",
+        "definition": "Home axes to maximum"
+    },
+    {
+        "code": "M0",
+        "definition": "Stop or Unconditional stop"
+    },
+    {
+        "code": "M1",
+        "definition": "Sleep or Conditional stop"
+    },
+    {
+        "code": "M2",
+        "definition": "Program End"
+    },
+    {
+        "code": "M3",
+        "definition": "Spindle On, Clockwise  (CNC specific)===="
+    },
+    {
+        "code": "M4",
+        "definition": "Spindle On, Counter-Clockwise (CNC specific)"
+    },
+    {
+        "code": "M5",
+        "definition": "Spindle Off (CNC specific)"
+    },
+    {
+        "code": "M6",
+        "definition": "Tool change"
+    },
+    {
+        "code": "M7",
+        "definition": "Mist Coolant On (CNC specific)"
+    },
+    {
+        "code": "M8",
+        "definition": "Flood Coolant On (CNC specific)"
+    },
+    {
+        "code": "M9",
+        "definition": "Coolant Off (CNC specific)"
+    },
+    {
+        "code": "M10",
+        "definition": "Vacuum On (CNC specific)"
+    },
+    {
+        "code": "M11",
+        "definition": "Vacuum Off (CNC specific)"
+    },
+    {
+        "code": "M17",
+        "definition": "Enable/Power all stepper motors===="
+    },
+    {
+        "code": "M18",
+        "definition": "Disable all stepper motors===="
+    },
+    {
+        "code": "M20",
+        "definition": "List SD card"
+    },
+    {
+        "code": "M21",
+        "definition": "Initialize SD card"
+    },
+    {
+        "code": "M22",
+        "definition": "Release SD card"
+    },
+    {
+        "code": "M23",
+        "definition": "Select SD file"
+    },
+    {
+        "code": "M24",
+        "definition": "Start/resume SD print"
+    },
+    {
+        "code": "M25",
+        "definition": "Pause SD print"
+    },
+    {
+        "code": "M26",
+        "definition": "Set SD position"
+    },
+    {
+        "code": "M27",
+        "definition": "Report SD print status"
+    },
+    {
+        "code": "M28",
+        "definition": "Begin write to SD card"
+    },
+    {
+        "code": "M29",
+        "definition": "Stop writing to SD card"
+    },
+    {
+        "code": "M30",
+        "definition": "Delete a file on the SD card"
+    },
+    {
+        "code": "M30",
+        "definition": "in grbl"
+    },
+    {
+        "code": "M31",
+        "definition": "Output time since last M109 or SD card start to serial"
+    },
+    {
+        "code": "M32",
+        "definition": "Select file and start SD print"
+    },
+    {
+        "code": "M33",
+        "definition": "Get the long name for an SD card file or folder"
+    },
+    {
+        "code": "M34",
+        "definition": "Set SD file sorting options"
+    },
+    {
+        "code": "M36",
+        "definition": "Return file information"
+    },
+    {
+        "code": "M37",
+        "definition": "Simulation mode"
+    },
+    {
+        "code": "M40",
+        "definition": "Eject"
+    },
+    {
+        "code": "M41",
+        "definition": "Loop"
+    },
+    {
+        "code": "M42",
+        "definition": "Switch I/O pin"
+    },
+    {
+        "code": "M43",
+        "definition": "Stand by on material exhausted"
+    },
+    {
+        "code": "M48",
+        "definition": "Measure Z-Probe repeatability"
+    },
+    {
+        "code": "M70",
+        "definition": "Display message"
+    },
+    {
+        "code": "M72",
+        "definition": "Play a tone or song"
+    },
+    {
+        "code": "M73",
+        "definition": "Set build percentage"
+    },
+    {
+        "code": "M80",
+        "definition": "ATX Power On"
+    },
+    {
+        "code": "M81",
+        "definition": "ATX Power Off"
+    },
+    {
+        "code": "M82",
+        "definition": "Set extruder to absolute mode"
+    },
+    {
+        "code": "M83",
+        "definition": "Set extruder to relative mode"
+    },
+    {
+        "code": "M84",
+        "definition": "Stop idle hold"
+    },
+    {
+        "code": "M85",
+        "definition": "Set inactivity shutdown timer"
+    },
+    {
+        "code": "M92",
+        "definition": "Set axis_steps_per_unit"
+    },
+    {
+        "code": "M93",
+        "definition": "Send axis_steps_per_unit"
+    },
+    {
+        "code": "M98",
+        "definition": "Call Macro/Subprogram"
+    },
+    {
+        "code": "M99",
+        "definition": "Return from Macro/Subprogram"
+    },
+    {
+        "code": "M98",
+        "definition": "Get axis_hysteresis_mm"
+    },
+    {
+        "code": "M99",
+        "definition": "Set axis_hysteresis_mm"
+    },
+    {
+        "code": "M101",
+        "definition": "Turn extruder 1 on (Forward), Undo Retraction"
+    },
+    {
+        "code": "M102",
+        "definition": "Turn extruder 1 on (Reverse)"
+    },
+    {
+        "code": "M103",
+        "definition": "Turn all extruders off, Extruder Retraction"
+    },
+    {
+        "code": "M104",
+        "definition": "Set Extruder Temperature"
+    },
+    {
+        "code": "M105",
+        "definition": "Get Extruder Temperature"
+    },
+    {
+        "code": "M106",
+        "definition": "Fan On"
+    },
+    {
+        "code": "M107",
+        "definition": "Fan Off"
+    },
+    {
+        "code": "M108",
+        "definition": "Set Extruder Speed"
+    },
+    {
+        "code": "M109",
+        "definition": "Set Extruder Temperature and Wait"
+    },
+    {
+        "code": "M110",
+        "definition": "Set Current Line Number"
+    },
+    {
+        "code": "M111",
+        "definition": "Set Debug Level"
+    },
+    {
+        "code": "M112",
+        "definition": "Emergency Stop"
+    },
+    {
+        "code": "M113",
+        "definition": "Set Extruder PWM"
+    },
+    {
+        "code": "M114",
+        "definition": "Get Current Position"
+    },
+    {
+        "code": "M115",
+        "definition": "Get Firmware Version and Capabilities"
+    },
+    {
+        "code": "M116",
+        "definition": "Wait"
+    },
+    {
+        "code": "M117",
+        "definition": "Get Zero Position"
+    },
+    {
+        "code": "M117",
+        "definition": "Display Message"
+    },
+    {
+        "code": "M118",
+        "definition": "Negotiate Features"
+    },
+    {
+        "code": "M119",
+        "definition": "Get Endstop Status"
+    },
+    {
+        "code": "M120",
+        "definition": "Push"
+    },
+    {
+        "code": "M121",
+        "definition": "Pop"
+    },
+    {
+        "code": "M120",
+        "definition": "Enable endstop detection"
+    },
+    {
+        "code": "M121",
+        "definition": "Disable endstop detection"
+    },
+    {
+        "code": "M122",
+        "definition": "Diagnose"
+    },
+    {
+        "code": "M123",
+        "definition": "Tachometer value"
+    },
+    {
+        "code": "M124",
+        "definition": "Immediate motor stop"
+    },
+    {
+        "code": "M126",
+        "definition": "Open Valve"
+    },
+    {
+        "code": "M127",
+        "definition": "Close Valve"
+    },
+    {
+        "code": "M128",
+        "definition": "Extruder Pressure PWM"
+    },
+    {
+        "code": "M129",
+        "definition": "Extruder pressure off"
+    },
+    {
+        "code": "M130",
+        "definition": "Set PID P value"
+    },
+    {
+        "code": "M131",
+        "definition": "Set PID I value"
+    },
+    {
+        "code": "M132",
+        "definition": "Set PID D value"
+    },
+    {
+        "code": "M133",
+        "definition": "Set PID I limit value"
+    },
+    {
+        "code": "M134",
+        "definition": "Write PID values to EEPROM"
+    },
+    {
+        "code": "M135",
+        "definition": "Set PID sample interval"
+    },
+    {
+        "code": "M136",
+        "definition": "Print PID settings to host"
+    },
+    {
+        "code": "M140",
+        "definition": "Set Bed Temperature (Fast)"
+    },
+    {
+        "code": "M141",
+        "definition": "Set Chamber Temperature (Fast)"
+    },
+    {
+        "code": "M142",
+        "definition": "Holding Pressure"
+    },
+    {
+        "code": "M143",
+        "definition": "Maximum hot-end temperature"
+    },
+    {
+        "code": "M144",
+        "definition": "Stand By Your Bed"
+    },
+    {
+        "code": "M146",
+        "definition": "Set Chamber Humidity"
+    },
+    {
+        "code": "M149",
+        "definition": "Set temperature units"
+    },
+    {
+        "code": "M150",
+        "definition": "Set display color"
+    },
+    {
+        "code": "M160",
+        "definition": "Number of mixed materials"
+    },
+    {
+        "code": "M163",
+        "definition": "Set weight of mixed material"
+    },
+    {
+        "code": "M164",
+        "definition": "Store weights"
+    },
+    {
+        "code": "M190",
+        "definition": "Wait for bed temperature to reach target temp"
+    },
+    {
+        "code": "M191",
+        "definition": "Wait for chamber temperature to reach target temp"
+    },
+    {
+        "code": "M200",
+        "definition": "Set filament diameter"
+    },
+    {
+        "code": "M201",
+        "definition": "Set max printing acceleration"
+    },
+    {
+        "code": "M202",
+        "definition": "Set max travel acceleration"
+    },
+    {
+        "code": "M203",
+        "definition": "Set maximum feedrate"
+    },
+    {
+        "code": "M204",
+        "definition": "Set default acceleration"
+    },
+    {
+        "code": "M205",
+        "definition": "Advanced settings"
+    },
+    {
+        "code": "M206",
+        "definition": "Set home offset"
+    },
+    {
+        "code": "M207",
+        "definition": "Calibrate z axis by detecting z max length"
+    },
+    {
+        "code": "M207",
+        "definition": "Set retract length"
+    },
+    {
+        "code": "M208",
+        "definition": "Set axis max travel"
+    },
+    {
+        "code": "M208",
+        "definition": "Set unretract length"
+    },
+    {
+        "code": "M209",
+        "definition": "Enable automatic retract"
+    },
+    {
+        "code": "M210",
+        "definition": "Set homing feedrates"
+    },
+    {
+        "code": "M211",
+        "definition": "Disable/Enable software endstops"
+    },
+    {
+        "code": "M212",
+        "definition": "Set Bed Level Sensor Offset"
+    },
+    {
+        "code": "M218",
+        "definition": "Set Hotend Offset"
+    },
+    {
+        "code": "M220",
+        "definition": "Set speed factor override percentage"
+    },
+    {
+        "code": "M221",
+        "definition": "Set extrude factor override percentage"
+    },
+    {
+        "code": "M220",
+        "definition": "Turn off AUX V1.0.5"
+    },
+    {
+        "code": "M221",
+        "definition": "Turn on AUX V1.0.5"
+    },
+    {
+        "code": "M222",
+        "definition": "Set speed of fast XY moves"
+    },
+    {
+        "code": "M223",
+        "definition": "Set speed of fast Z moves"
+    },
+    {
+        "code": "M224",
+        "definition": "Enable extruder during fast moves"
+    },
+    {
+        "code": "M225",
+        "definition": "Disable on extruder during fast moves"
+    },
+    {
+        "code": "M226",
+        "definition": "Gcode Initiated Pause"
+    },
+    {
+        "code": "M226",
+        "definition": "Wait for pin state"
+    },
+    {
+        "code": "M227",
+        "definition": "Enable Automatic Reverse and Prime"
+    },
+    {
+        "code": "M228",
+        "definition": "Disable Automatic Reverse and Prime"
+    },
+    {
+        "code": "M229",
+        "definition": "Enable Automatic Reverse and Prime"
+    },
+    {
+        "code": "M230",
+        "definition": "Disable / Enable Wait for Temperature Change"
+    },
+    {
+        "code": "M231",
+        "definition": "Set OPS parameter"
+    },
+    {
+        "code": "M232",
+        "definition": "Read and reset max. advance values"
+    },
+    {
+        "code": "M240",
+        "definition": "Trigger camera"
+    },
+    {
+        "code": "M240",
+        "definition": "Start conveyor belt motor / Echo off"
+    },
+    {
+        "code": "M241",
+        "definition": "Stop conveyor belt motor / echo on"
+    },
+    {
+        "code": "M245",
+        "definition": "Start cooler"
+    },
+    {
+        "code": "M246",
+        "definition": "Stop cooler"
+    },
+    {
+        "code": "M250",
+        "definition": "Set LCD contrast"
+    },
+    {
+        "code": "M251",
+        "definition": "Measure Z steps from homing stop (Delta printers)"
+    },
+    {
+        "code": "M280",
+        "definition": "Set servo position"
+    },
+    {
+        "code": "M300",
+        "definition": "Play beep sound"
+    },
+    {
+        "code": "M301",
+        "definition": "Set PID parameters"
+    },
+    {
+        "code": "M302",
+        "definition": "Allow cold extrudes"
+    },
+    {
+        "code": "M303",
+        "definition": "Run PID tuning"
+    },
+    {
+        "code": "M304",
+        "definition": "Set PID parameters - Bed"
+    },
+    {
+        "code": "M305",
+        "definition": "Set thermistor and ADC parameters"
+    },
+    {
+        "code": "M306",
+        "definition": "set home offset calculated from toolhead position"
+    },
+    {
+        "code": "M320",
+        "definition": "Activate autolevel(Repetier)"
+    },
+    {
+        "code": "M321",
+        "definition": "Deactivate autolevel(Repetier)"
+    },
+    {
+        "code": "M322",
+        "definition": "Reset autolevel matrix"
+    },
+    {
+        "code": "M340",
+        "definition": "Control the servos"
+    },
+    {
+        "code": "M350",
+        "definition": "Set microstepping mode"
+    },
+    {
+        "code": "M351",
+        "definition": "Toggle MS1 MS2 pins directly"
+    },
+    {
+        "code": "M355",
+        "definition": "Turn case lights on/off"
+    },
+    {
+        "code": "M360",
+        "definition": "Report firmware configuration"
+    },
+    {
+        "code": "M360",
+        "definition": "Move to Theta 0 degree position"
+    },
+    {
+        "code": "M361",
+        "definition": "Move to Theta 90 degree position"
+    },
+    {
+        "code": "M362",
+        "definition": "Move to Psi 0 degree position"
+    },
+    {
+        "code": "M363",
+        "definition": "Move to Psi 90 degree position"
+    },
+    {
+        "code": "M364",
+        "definition": "Move to Psi + Theta 90 degree position"
+    },
+    {
+        "code": "M365",
+        "definition": "SCARA scaling factor"
+    },
+    {
+        "code": "M366",
+        "definition": "SCARA convert trim"
+    },
+    {
+        "code": "M370",
+        "definition": "Morgan manual bed level - clear map"
+    },
+    {
+        "code": "M371",
+        "definition": "Move to next calibration position"
+    },
+    {
+        "code": "M372",
+        "definition": "Record calibration value, and move to next position"
+    },
+    {
+        "code": "M373",
+        "definition": "End bed level calibration mode"
+    },
+    {
+        "code": "M374",
+        "definition": "Save calibration grid"
+    },
+    {
+        "code": "M375",
+        "definition": "Display matrix / Load Matrix"
+    },
+    {
+        "code": "M380",
+        "definition": "Activate solenoid"
+    },
+    {
+        "code": "M381",
+        "definition": "Disable all solenoids"
+    },
+    {
+        "code": "M400",
+        "definition": "Wait for current moves to finish"
+    },
+    {
+        "code": "M401",
+        "definition": "Lower z-probe"
+    },
+    {
+        "code": "M402",
+        "definition": "Raise z-probe"
+    },
+    {
+        "code": "M404",
+        "definition": "Filament width and nozzle diameter"
+    },
+    {
+        "code": "M405",
+        "definition": "Filament Sensor on"
+    },
+    {
+        "code": "M406",
+        "definition": "Filament Sensor off"
+    },
+    {
+        "code": "M407",
+        "definition": "Display filament diameter"
+    },
+    {
+        "code": "M408",
+        "definition": "Report JSON-style response"
+    },
+    {
+        "code": "M420",
+        "definition": "Set RGB Colors as PWM and is also Enable/Disable Mesh Bed Leveling"
+    },
+    {
+        "code": "M421",
+        "definition": "Set a Mesh Bed Leveling Z coordinate"
+    },
+    {
+        "code": "M450",
+        "definition": "Report Printer Mode"
+    },
+    {
+        "code": "M451",
+        "definition": "Select FFF Printer Mode"
+    },
+    {
+        "code": "M452",
+        "definition": "Select Laser Printer Mode"
+    },
+    {
+        "code": "M453",
+        "definition": "Select CNC Printer Mode"
+    },
+    {
+        "code": "M460",
+        "definition": "Define temperature range for thermistor controlled fan"
+    },
+    {
+        "code": "M500",
+        "definition": "Store parameters in EEPROM"
+    },
+    {
+        "code": "M501",
+        "definition": "Read parameters from EEPROM"
+    },
+    {
+        "code": "M502",
+        "definition": "Revert to the default \"factory settings.\""
+    },
+    {
+        "code": "M503",
+        "definition": "Print settings"
+    },
+    {
+        "code": "M540",
+        "definition": "Enable/Disable \"Stop SD Print on Endstop Hit\""
+    },
+    {
+        "code": "M540",
+        "definition": "Set MAC address"
+    },
+    {
+        "code": "M550",
+        "definition": "Set Name"
+    },
+    {
+        "code": "M551",
+        "definition": "Set Password"
+    },
+    {
+        "code": "M552",
+        "definition": "Set IP address"
+    },
+    {
+        "code": "M553",
+        "definition": "Set Netmask"
+    },
+    {
+        "code": "M554",
+        "definition": "Set Gateway"
+    },
+    {
+        "code": "M555",
+        "definition": "Set compatibility"
+    },
+    {
+        "code": "M556",
+        "definition": "Axis compensation"
+    },
+    {
+        "code": "M557",
+        "definition": "Set Z probe point"
+    },
+    {
+        "code": "M558",
+        "definition": "Set Z probe type"
+    },
+    {
+        "code": "M559",
+        "definition": "Upload configuration file"
+    },
+    {
+        "code": "M560",
+        "definition": "Upload web page file"
+    },
+    {
+        "code": "M561",
+        "definition": "Set Identity Transform"
+    },
+    {
+        "code": "M562",
+        "definition": "Reset temperature fault"
+    },
+    {
+        "code": "M563",
+        "definition": "Define or remove a tool"
+    },
+    {
+        "code": "M564",
+        "definition": "Limit axes"
+    },
+    {
+        "code": "M565",
+        "definition": "Set Z probe offset"
+    },
+    {
+        "code": "M566",
+        "definition": "Set allowable instantaneous speed change"
+    },
+    {
+        "code": "M567",
+        "definition": "Set tool mix ratios"
+    },
+    {
+        "code": "M568",
+        "definition": "Turn off/on tool mix ratios"
+    },
+    {
+        "code": "M569",
+        "definition": "Set axis direction and enable values"
+    },
+    {
+        "code": "M570",
+        "definition": "Set heater timeout"
+    },
+    {
+        "code": "M571",
+        "definition": "Set output on extrude"
+    },
+    {
+        "code": "M572",
+        "definition": "Set or report extruder elasticity compensation"
+    },
+    {
+        "code": "M573",
+        "definition": "Report heater PWM"
+    },
+    {
+        "code": "M574",
+        "definition": "Set endstop configuration"
+    },
+    {
+        "code": "M575",
+        "definition": "Set serial comms parameters"
+    },
+    {
+        "code": "M577",
+        "definition": "Wait until endstop is triggered"
+    },
+    {
+        "code": "M578",
+        "definition": "Fire inkjet bits"
+    },
+    {
+        "code": "M579",
+        "definition": "Scale Cartesian axes"
+    },
+    {
+        "code": "M580",
+        "definition": "Select Roland"
+    },
+    {
+        "code": "M600",
+        "definition": "Set line cross section"
+    },
+    {
+        "code": "M600",
+        "definition": "Filament change pause"
+    },
+    {
+        "code": "M605",
+        "definition": "Set dual x-carriage movement mode"
+    },
+    {
+        "code": "M665",
+        "definition": "Set delta configuration"
+    },
+    {
+        "code": "M666",
+        "definition": "Set delta endstop adjustment"
+    },
+    {
+        "code": "M667",
+        "definition": "Select CoreXY mode"
+    },
+    {
+        "code": "M668",
+        "definition": "Set Z-offset compensations polynomial"
+    },
+    {
+        "code": "M700",
+        "definition": "Level plate"
+    },
+    {
+        "code": "M701",
+        "definition": "Load filament"
+    },
+    {
+        "code": "M702",
+        "definition": "Unload filament===="
+    },
+    {
+        "code": "M851",
+        "definition": "Set Z-Probe Offset"
+    },
+    {
+        "code": "M906",
+        "definition": "Set motor currents"
+    },
+    {
+        "code": "M907",
+        "definition": "Set digital trimpot motor"
+    },
+    {
+        "code": "M908",
+        "definition": "Control digital trimpot directly"
+    },
+    {
+        "code": "M909",
+        "definition": "Set microstepping"
+    },
+    {
+        "code": "M910",
+        "definition": "Set decay mode"
+    },
+    {
+        "code": "M928",
+        "definition": "Start SD logging"
+    },
+    {
+        "code": "M997",
+        "definition": "Perform in-application firmware upgrade"
+    },
+    {
+        "code": "M998",
+        "definition": "Request resend of line"
+    },
+    {
+        "code": "M999",
+        "definition": "Restart after being stopped by error"
+    }
+]
