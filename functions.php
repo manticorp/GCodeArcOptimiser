@@ -659,7 +659,7 @@ function drawResult($circle, $lines, $id){
     global $debug;
     if($debug){
         $arc = implode("\n", array_map(function($a){ return "    ".$a;}, explode("\n",generateGcodeArc($circle, $lines))));
-        $height = 500; $width = 500; $scale = 2;
+        $height = 1000; $width = 1000; $scale = 3;
         echo createCanvas($id, $height, $width);
         $canvasPoints = array();
         foreach($lines as $line){
