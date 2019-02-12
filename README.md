@@ -19,6 +19,14 @@ You could create a CLI file like this:
 
 ```php
 <?php
+include "functions.php";
+
+$debug             = false;
+$lookahead         = 5;   //    
+$pos_error         = 0.1; // absolute
+$alignment_error   = 0.01; // absolute  
+$extrusion_error   = 0.15; // percent       
+$start             = microtime(true);
 
 $options = getopt('f:o:');
 

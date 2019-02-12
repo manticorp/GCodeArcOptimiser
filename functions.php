@@ -517,7 +517,7 @@ function angleBetween($v1, $v2) {
 
 function vector_dot_product($vector1, $vector2)
 {
-    return (($vector1['X'] * $vector2['X']) + ($vector1['Y'] + $vector2['Y']));
+    return (($vector1['X'] * $vector2['X']) + ($vector1['Y'] * $vector2['Y']));
 }
 
 /**
