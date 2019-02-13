@@ -35,7 +35,7 @@ if (!empty($_FILES) && !empty($_FILES['upload'])) {
     $gcode  = SplFixedArray::fromArray($gcode);
 }
 
-$optimiser = new GcodeArcOptimiser(
+$optimiser = new GCodeArcOptimiser(
     $lookahead,
     $pos_error,
     $alignment_error,

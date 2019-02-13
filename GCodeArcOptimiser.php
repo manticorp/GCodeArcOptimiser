@@ -1,6 +1,6 @@
 <?php
 
-class GcodeArcOptimiser {
+class GCodeArcOptimiser {
     protected $debug           = false;
     protected $lookahead       = 10;
     protected $posError        = 0.1;  // absolute

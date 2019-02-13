@@ -11,7 +11,7 @@ $inputFn = 'SomeGcodeFile.g';
 
 $gcode  = file_get_contents($inputFn);
 
-$optimiser = new GcodeArcOptimiser();
+$optimiser = new GCodeArcOptimiser();
 $processed = $optimiser->process($gcode);
 ```
 
@@ -25,7 +25,7 @@ $options = getopt('f:o:');
 
 $gcode  = file_get_contents($options['f']);
 
-$optimiser = new GcodeArcOptimiser();
+$optimiser = new GCodeArcOptimiser();
 $processed = $optimiser->process($gcode);
 
 file_put_contents($options['o'], $processed['gcode']);
@@ -57,7 +57,7 @@ There's also a slightly more complex circle fitting algorithm included, but it's
 
 ### I want to *really* understand how it works
 
-Then I suggest you look at: https://github.com/manticorp/GCodeArcOptimiser/blob/master/functions.php
+Then I suggest you look at: https://github.com/manticorp/GCodeArcOptimiser/blob/master/GCodeArcOptimiser.php
 
 If you want to see how it kinda works, the main code flow goes like so:
 
