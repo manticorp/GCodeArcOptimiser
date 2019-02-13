@@ -24,6 +24,12 @@ class GcodeArcOptimiser {
 
     public function process($gcode)
     {
+        if (is_string($gcode)) {
+            $gcode  = str_replace("\r","",file_get_contents($options['f']));
+            $gcode  = explode("\n", $gcode);
+            $gcode  = SplFixedArray::fromArray($gcode);
+        }
+
         $lookahead = $this->getLookahead();
         $debug = $this->getDebug();
         $start = microtime(true);
