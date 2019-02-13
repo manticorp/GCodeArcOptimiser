@@ -1,53 +1,6 @@
 <?php
-
-$debug             = isset($_GET['debug']) ? filter_var($_GET['debug'] ,FILTER_VALIDATE_BOOLEAN) : false;
-$lookahead         = 5;   //
-$pos_error         = 0.1; // absolute
-$alignment_error   = 0.01; // absolute
-$extrusion_error   = 0.15; // percent
-
-define('EOL', "<br />");
-
-$outFile = './output.gcode';
-
-include "functions.php";
-
-$errorFiles = array();
-if (!empty($_FILES) && !empty($_FILES['upload'])) {
-    foreach($_FILES['upload']['name'] as $key => $fn) {
-        if($_FILES['upload']['error'][$key] !== 0){
-            $errorFiles[] = $fn;
-            continue;
-        } else {
-            $filename = realpath("./inputs/").DIRECTORY_SEPARATOR.$fn;
-            if (
-                !is_uploaded_file($_FILES['upload']['tmp_name'][$key]) or
-                !copy($_FILES['upload']['tmp_name'][$key], $filename))
-            {
-                $error = "Could not  save file as $filename!";
-                exit();
-            }
-        }
-    }
-}
-
 $files = array_merge(glob('./inputs/*.gcode'),glob('./inputs/*.g'));
-
-if(isset($_GET['delete']) && file_exists($_GET['delete']) && in_array($_GET['delete'], $files)) {
-    unlink($_GET['delete']);
-    unset($files[array_search($_GET['delete'], $files)]);
-}
-
-if(isset($_GET['file'])) {
-    $input = $_GET['file'];
-
-    $gcode  = str_replace("\r","",file_get_contents($input));
-    $gcode  = $gcodeArray = explode("\n", $gcode);
-    $gcode  = SplFixedArray::fromArray($gcode);
-}
-
 ?>
-
 <!DOCTYPE html>
 <html lang="">
     <head>
@@ -94,6 +47,18 @@ if(isset($_GET['file'])) {
         .deletelink:hover {
             color: #a00;
         }
+        .chit {
+            display: inline-block;
+            width: 1.2em;
+            height: 1.2em;
+            margin-right: 0.5em;
+        }
+        .colours-explained {
+            display: flex;
+        }
+        .colours-explained .part {
+            margin-right: 1em;
+        }
         canvas { border: 1px solid black; }
         </style>
 
@@ -104,7 +69,12 @@ if(isset($_GET['file'])) {
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        <script type="text/javascript" src="gcodeView.js"></script>
+    
+
+        <script src="js/three.js"></script>
+        <script src="js/controls/OrbitControls.js"></script>
+        <script src="js/loaders/GCodeLoader.js"></script>
+
     </head>
     <body>
 
@@ -112,7 +82,7 @@ if(isset($_GET['file'])) {
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <form action="index.php" method="POST" class="form-horizontal" role="form" enctype="multipart/form-data">
+                    <form id="the-file-form" action="process.php" method="POST" class="form-horizontal" role="form" enctype="multipart/form-data">
                             <div class="form-group">
                                 <legend>Upload File</legend>
                             </div>
@@ -121,7 +91,7 @@ if(isset($_GET['file'])) {
                                 <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file">
-                                            Browse&hellip; <input type="file" id="upload" name="upload[]" multiple>
+                                            Browse&hellip; <input type="file" id="upload" name="upload" accept=".g,.gcode">
                                         </span>
                                     </span>
                                     <input type="text" class="form-control" readonly>
@@ -137,65 +107,172 @@ if(isset($_GET['file'])) {
                     </form>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-<?php if(!empty($files)): ?>
-                    <ul class="file-list">
-                    <?php foreach($files as $file): ?>
-                        <li><a href="?file=<?php echo $file; ?>"><?php echo basename($file); ?></a> <a class="deletelink" href="?delete=<?php echo $file; ?>"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></li>
-                    <?php endforeach; ?>
-                    </ul>
-<?php endif; ?>
-                </div>
+        </div>
+        <div id="result-stats">
+        </div>
+        <div class="colours-explained">
+            <div class="part"><span class="chit" style="background-color: #F00;"></span> Red = Movement</div>
+            <div class="part"><span class="chit" style="background-color: #0F0;"></span> Green = G1 Line Extrusion</div>
+            <div class="part"><span class="chit" style="background-color: #00F;"></span> Blue = G2 & G3 Arc Extrusion</div>
+        </div>
+        <div style="display:flex">
+            <div style="width: calc(50% - 8px);">
+                <h1>Input</h1>
+                <div id="input" style="width: 100%; height: 500px;"></div>
+            </div>
+            <div style="margin-left: 16px; width: calc(50% - 8px);">
+                <h1>Output</h1>
+                <div id="output" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
-
-<?php if(isset($_GET['file'])): ?>
-        <?php
-        $start = microtime(true);
-        printf("Total Lines: %d | ", $gcode->count());
-        ?>
-        <hr/>
-        <?php
-        $output = processGcode($gcode);
-        ?>
-        <?php file_put_contents($outFile, $output); ?>
-        <?php
-        printf("\nTotal Output Lines %d   |  Took %.4fs   | Peak Memory: %s\n", substr_count($output,"\n"), microtime(true)-$start, human_byte_convert(memory_get_peak_usage()));
-        ?>
-<?php elseif(empty($files)): ?>
-    <h2>No Files Found</h2>
-<?php endif; ?>
-
         <!-- jQuery -->
         <script src="//code.jquery.com/jquery.js"></script>
         <!-- Bootstrap JavaScript -->
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
         <script>
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip();
-        });
-        $(document).on('change', '.btn-file :file', function() {
-            var input = $(this),
-                numFiles = input.get(0).files ? input.get(0).files.length : 1,
-                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-            input.trigger('fileselect', [numFiles, label]);
-        });
-        $(document).ready( function() {
-            $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+        (function() {
+             function fitCameraToObject( camera, object, offset, controls, scene ) {
 
-                var input = $(this).parents('.input-group').find(':text'),
-                    log = numFiles > 1 ? numFiles + ' files selected' : label;
+                offset = offset || 1.25;
 
-                if( input.length ) {
-                    input.val(log);
+                const boundingBox = new THREE.Box3();
+
+                // get bounding box of object - this will be used to setup controls and camera
+                boundingBox.setFromObject( object );
+                    
+                        //ERRORS HERE
+                let center = new THREE.Vector3();
+                boundingBox.getCenter(center);
+                let size = new THREE.Vector3();
+                boundingBox.getSize(size);
+
+                // get the max side of the bounding box (fits to width OR height as needed )
+                const maxDim = Math.max( size.x, size.y, size.z );
+                const fov = camera.fov * ( Math.PI / 180 );
+                cameraZ = Math.abs( maxDim / 2 * Math.tan( fov * 2 ) ); //Applied fifonik correction
+
+                cameraZ *= offset; // zoom out a little so that objects don't fill the screen
+
+                // <--- NEW CODE
+                //Method 1 to get object's world position
+                scene.updateMatrixWorld(); //Update world positions
+                var objectWorldPosition = new THREE.Vector3();
+                objectWorldPosition.setFromMatrixPosition( object.matrixWorld );
+                
+                //Method 2 to get object's world position
+                //objectWorldPosition = object.getWorldPosition();
+
+                const directionVector = camera.position.sub(objectWorldPosition);     //Get vector from camera to object
+                const unitDirectionVector = directionVector.normalize(); // Convert to unit vector
+                camera.position = unitDirectionVector.multiplyScalar(cameraZ); //Multiply unit vector times cameraZ distance
+                camera.lookAt(objectWorldPosition); //Look at object
+                // --->
+
+                const minZ = boundingBox.min.z;
+                const cameraToFarEdge = ( minZ < 0 ) ? -minZ + cameraZ : cameraZ - minZ;
+
+                camera.far = cameraToFarEdge * 3;
+                camera.updateProjectionMatrix();
+
+                if ( controls ) {
+
+                  // set camera to rotate around center of loaded object
+                  controls.target = center;
+
+                  // prevent camera from zooming out far enough to create far plane cutoff
+                  controls.maxDistance = cameraToFarEdge * 2;
+                         // ERROR HERE    
+                  controls.saveState();
+
                 } else {
-                    if( log ) alert(log);
-                }
 
+                    camera.lookAt( center )
+
+               }
+            }
+            function displayGcode (container, gcode) {
+                $(container).empty();
+                var camera, scene, renderer, controls;
+                var w = $(container).width(), h = $(container).height();
+                function init() {
+                    camera = new THREE.PerspectiveCamera( 60, container.clientWidth / container.clientHeight, 0.1, 10000 );
+                    camera.position.set( 0, 0, 50 );
+                    controls = new THREE.OrbitControls( camera , container);
+                    scene = new THREE.Scene();
+                    var loader = new THREE.GCodeLoader();
+                    var object = loader.parse(gcode);
+                    object.position.set( 0, 0, 0 );
+                    scene.add( object );
+                    renderer = new THREE.WebGLRenderer();
+                    renderer.setPixelRatio( window.devicePixelRatio );
+                    renderer.setSize(w, h);
+                    container.appendChild( renderer.domElement );
+                    fitCameraToObject(camera, object, null, controls, scene);
+                }
+                function animate() {
+                    renderer.render( scene, camera );
+                    controls.update();
+                    requestAnimationFrame( animate );
+                }
+                init();
+                animate();
+            }
+            $(document).on('change', '.btn-file :file', function() {
+                var input = $(this),
+                    numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                input.trigger('fileselect', [numFiles, label]);
             });
-        });
+            $(document).ready( function() {
+                $('[data-toggle="tooltip"]').tooltip();
+                $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+
+                    var input = $(this).parents('.input-group').find(':text'),
+                        log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+                    if( input.length ) {
+                        input.val(log);
+                    } else {
+                        if( log ) alert(log);
+                    }
+
+                });
+                $("#the-file-form").on('submit', function(e) {
+                    var form = $(this);
+                    var url = form.attr('action');
+                    var formData = new FormData();
+                    formData.append("upload", $('#upload').get(0).files[0]);
+
+                    var request = new XMLHttpRequest();
+                    request.open("POST", url, true);
+
+                    request.addEventListener('load', function(e) {
+                        if (request.status === 200) {
+                            result = JSON.parse(this.responseText);
+                            displayGcode(document.getElementById('input'), result.original);
+                            displayGcode(document.getElementById('output'), result.optimised);
+                            $('#result-stats').empty().append('<pre>'+
+                                '        Time Taken : ' + result.time + "\n" +
+                                ' Total Input Lines : ' + result.input_lines + "\n" +
+                                'Total Output Lines : ' + result.output_lines + "\n" +
+                                'Total Replacements : ' + result.total_replacements + "\n" +
+                            '</pre>');
+                        } else if (request.status > 200) {
+                            console.warn(e, this.responseText);
+                        }
+                    });
+
+                    request.addEventListener('error', function(e) {
+                        console.log(e);
+                    });
+
+                    request.send(formData);
+                    e.preventDefault();
+                    return false;
+                });
+            });
+        })();
         </script>
     </body>
 </html>
