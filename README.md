@@ -6,37 +6,29 @@
 Either use the built in index.php, or use it like this:
 
 ```php
+include "GCodeArcOptimiser.php";
 $inputFn = 'SomeGcodeFile.g';
 
-$gcode  = str_replace("\r","",file_get_contents($inputFn));
-$gcode  = explode("\n", $gcode);
-$gcode  = SplFixedArray::fromArray($gcode);
+$gcode  = file_get_contents($inputFn);
 
-$processed = processGcode($gcode);
+$optimiser = new GcodeArcOptimiser();
+$processed = $optimiser->process($gcode);
 ```
 
 You could create a CLI file like this:
 
 ```php
 <?php
-include "functions.php";
-
-$debug             = false;
-$lookahead         = 5;   //    
-$pos_error         = 0.1; // absolute
-$alignment_error   = 0.01; // absolute  
-$extrusion_error   = 0.15; // percent       
-$start             = microtime(true);
+include "GCodeArcOptimiser.php";
 
 $options = getopt('f:o:');
 
-$gcode  = str_replace("\r","",file_get_contents($options['f']));
-$gcode  = explode("\n", $gcode);
-$gcode  = SplFixedArray::fromArray($gcode);
+$gcode  = file_get_contents($options['f']);
 
-$processed = processGcode($gcode);
+$optimiser = new GcodeArcOptimiser();
+$processed = $optimiser->process($gcode);
 
-file_put_contents($options['o'], $processed);
+file_put_contents($options['o'], $processed['gcode']);
 ```
 
 and then use it like this:
@@ -70,7 +62,7 @@ Then I suggest you look at: https://github.com/manticorp/GCodeArcOptimiser/blob/
 If you want to see how it kinda works, the main code flow goes like so:
 
 ```
-processGcode()
+process()
     |
     V
 bufferValid()
@@ -83,9 +75,11 @@ generateGcodeArc()
 
 ```
 
-Just look at each of those functions in functions.php
+Just look at each of those functions in GCodeArcOptimiser.php
 
 ### Example output
+
+![Example Output](https://github.com/manticorp/GCodeArcOptimiser/blob/master/example-result.png?raw=true)
 
 In my tests, a circle heavy print (a pawn chess piece) can go from 45,000 instructions to around 14,000
 
