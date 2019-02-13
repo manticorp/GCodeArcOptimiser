@@ -1,6 +1,8 @@
 # GCode Optimiser
 ## Optimises GCode for G2 and G3 arc movements
 
+![Example Output](https://github.com/manticorp/GCodeArcOptimiser/blob/master/example-result.png?raw=true)
+
 ### Basic Usage
 
 Either use the built in index.php, or use it like this:

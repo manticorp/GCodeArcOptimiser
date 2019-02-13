@@ -74,7 +74,10 @@ $files = array_merge(glob('./inputs/*.gcode'),glob('./inputs/*.g'));
         <script src="js/three.js"></script>
         <script src="js/controls/OrbitControls.js"></script>
         <script src="js/loaders/GCodeLoader.js"></script>
-
+        <!-- jQuery -->
+        <script src="//code.jquery.com/jquery.js"></script>
+        <!-- Bootstrap JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     </head>
     <body>
 
@@ -125,10 +128,6 @@ $files = array_merge(glob('./inputs/*.gcode'),glob('./inputs/*.g'));
                 <div id="output" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
-        <!-- jQuery -->
-        <script src="//code.jquery.com/jquery.js"></script>
-        <!-- Bootstrap JavaScript -->
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
         <script>
         (function() {
