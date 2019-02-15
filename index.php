@@ -118,6 +118,9 @@ $files = array_merge(glob('./inputs/*.gcode'),glob('./inputs/*.g'));
             <div class="part"><span class="chit" style="background-color: #0F0;"></span> Green = G1 Line Extrusion</div>
             <div class="part"><span class="chit" style="background-color: #00F;"></span> Blue = G2 & G3 Arc Extrusion</div>
         </div>
+        <div class="colours-explained">
+            <small>Note: G2 and G3 display from the three.js gcode loader currently doesn't work very well and will sometimes show arcs inverted...</small>
+        </div>
         <div style="display:flex">
             <div style="width: calc(50% - 8px);">
                 <h1>Input</h1>

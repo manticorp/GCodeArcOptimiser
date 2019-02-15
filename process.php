@@ -12,8 +12,6 @@ include "GCodeArcOptimiser.php";
 
 $inputGcode = null;
 
-header('Content-Type: application/json');
-
 $errorFiles = array();
 if (!empty($_FILES) && !empty($_FILES['upload'])) {
     if($_FILES['upload']['error'] !== 0){
@@ -27,12 +25,9 @@ if (!empty($_FILES) && !empty($_FILES['upload'])) {
             $gcode = SplFixedArray::fromArray($gcode);
         }
     }
-} else if(isset($_POST['file'])) {
-    $input = $_GET['file'];
-    $inputGcode = file_get_contents($_GET['file']);
-    $gcode  = str_replace("\r","",file_get_contents($inputGcode));
-    $gcode  = explode("\n", $gcode);
-    $gcode  = SplFixedArray::fromArray($gcode);
+} else if(isset($_POST['file']) || isset($_GET['file'])) {
+    $input = isset($_POST['file']) ? $_POST['file'] : $_GET['file'];
+    $gcode = $inputGcode = file_get_contents($input);
 }
 
 $optimiser = new GCodeArcOptimiser(
@@ -46,11 +41,27 @@ $optimiser = new GCodeArcOptimiser(
 $output = $optimiser->process($gcode);
 file_put_contents($outFile, $output);
 
-echo json_encode([
-    'original'              => $inputGcode,
-    'optimised'             => $output['gcode'],
-    'time'                  => $output['time'],
-    'total_replacements'    => $output['total_replacements'],
-    'input_lines'           => $output['input_lines'],
-    'output_lines'          => $output['output_lines'],
-]);
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    echo "<pre>";
+    print_r([
+        'time'                  => $output['time'],
+        'timings_granular'      => $optimiser->getTimingsFormatted(),
+        'total_replacements'    => $output['total_replacements'],
+        'input_lines'           => $output['input_lines'],
+        'output_lines'          => $output['output_lines'],
+        // 'optimised'             => $output['gcode'],
+        // 'original'              => $inputGcode,
+    ]);
+    echo "</pre>";
+} else {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'time'                  => $output['time'],
+        'timings_granular'      => $optimiser->getTimingsFormatted(),
+        'total_replacements'    => $output['total_replacements'],
+        'input_lines'           => $output['input_lines'],
+        'output_lines'          => $output['output_lines'],
+        'optimised'             => $output['gcode'],
+        'original'              => $inputGcode,
+    ]);
+}

@@ -7,6 +7,10 @@ class GCodeArcOptimiser {
     protected $alignmentError  = 0.01; // absolute
     protected $extrusionError  = 0.15; // percent
 
+    protected $timings         = [];
+
+    protected $linesCache      = [];
+
     public function __construct(
         $lookahead      = 10,
         $posError       = 0.1,
@@ -22,10 +26,76 @@ class GCodeArcOptimiser {
         return $this;
     }
 
+    public function startTime($key)
+    {
+        if (!isset($this->timings[$key])) {
+            $this->timings[$key] = [
+                'key'   => $key,
+                'start' => null,
+                'iters' => [],
+            ];
+        }
+        $this->timings[$key]['start'] = microtime(true);
+        return $this;
+    }
+
+    public function stopTime($key)
+    {
+        if (!isset($this->timings[$key])) {
+            $this->startTime($key);
+        }
+        if (is_null($this->timings[$key]['start'])) {
+            $this->timings[$key]['start'] = microtime(true);
+        }
+        $duration = microtime(true) - $this->timings[$key]['start'];
+        $this->timings[$key]['start']   = null;
+        $this->timings[$key]['iters'][] = $duration;
+        return $this;
+    }
+
+    public function resetTimings()
+    {
+        $this->timings = [];
+        return $this;
+    }
+
+    public function getTimingsFormatted()
+    {
+        $formatted = [];
+        foreach ($this->timings as $key => $value) {
+            $format = [
+                'key'           => $value['key'],
+                'iters'         => count($value['iters']),
+                'total_time'    => array_sum($value['iters']),
+                'average_time'  => array_sum($value['iters']) / count($value['iters']),
+            ];
+            $format['total_time_f'] = $this->formatTime($format['total_time']);
+            $format['average_time_f'] = $this->formatTime($format['average_time']);
+            $formatted[] = $format;
+        }
+        return $formatted;
+    }
+
+    public function formatTime($time)
+    {
+        $log = ceil(log10($time));
+        $unit = 's';
+        if ($log <= -1) {
+            $time *= 1000;
+            $unit = 'ms';
+        }
+        if ($log <= -5) {
+            $time *= 1000;
+            $unit = 'us';//'μs';
+        }
+        return sprintf('%.4f'.$unit, $time);
+    }
+
     public function process($gcode)
     {
+        $this->startTime(__FUNCTION__);
         if (is_string($gcode)) {
-            $gcode  = str_replace("\r","",file_get_contents($options['f']));
+            $gcode  = str_replace("\r","",$gcode);
             $gcode  = explode("\n", $gcode);
             $gcode  = SplFixedArray::fromArray($gcode);
         }
@@ -45,6 +115,7 @@ class GCodeArcOptimiser {
         $gcode->rewind();
 
         $totalInputLines = $gcode->count();
+
 
         // prefill the buffer
         do {
@@ -110,6 +181,7 @@ class GCodeArcOptimiser {
             if($gcode->valid())
                 $buffer->enqueue($gcode->current());
         }
+        $this->stopTime(__FUNCTION__);
 
         return [
             'gcode'              => $output,
@@ -129,6 +201,7 @@ class GCodeArcOptimiser {
      */
     public function generateGcodeArc($circle, $lines)
     {
+        $this->startTime(__FUNCTION__);
         /**
          * Usage
          *   G2 Xnnn Ynnn Innn Jnnn Ennn Fnnn (Clockwise Arc)
@@ -164,7 +237,7 @@ class GCodeArcOptimiser {
             $centerPoint['Y']-$startPoint['Y'],
             $extrusion
         );
-
+        $this->stopTime(__FUNCTION__);
         return $return;
     }
 
@@ -181,12 +254,15 @@ class GCodeArcOptimiser {
      */
     public function bufferValid($buffer)
     {
+        $this->startTime(__FUNCTION__);
         for($buffer->rewind();$buffer->valid();$buffer->next()){
             if(substr($buffer->current(), 0, 2) !== "G1"){
                 $buffer->rewind();
+                $this->stopTime(__FUNCTION__);
                 return false;
             } else if(strpos($buffer->current(), "Z") !== FALSE) {
                 $buffer->rewind();
+                $this->stopTime(__FUNCTION__);
                 return false;
             }
         }
@@ -205,26 +281,31 @@ class GCodeArcOptimiser {
         }
         if(!($allE || $allF)){
             $buffer->rewind();
+            $this->stopTime(__FUNCTION__);
             return false;
-        }
-        if($allE){
-            $extrusions = $this->getExtrusionLengths($lines);
-            $eerror = $this->calculateExtrusionError($extrusions);
-            if($this->calculateExtrusionError($extrusions) === false){
-                $buffer->rewind();
-                return false;
-            }
         }
         $lines->rewind();
         $circle = $this->getCircle($lines);
         if($circle === false) {
             $buffer->rewind();
+            $this->stopTime(__FUNCTION__);
             return false;
         }
         if(max($circle['errors']) > $this->getPosError()){
+            $this->stopTime(__FUNCTION__);
             return false;
         }
+        if($allE){
+            $extrusions = $this->getExtrusionLengths($lines);
+            $eerror = $this->calculateExtrusionError($extrusions);
+            if($eerror === false){
+                $buffer->rewind();
+                $this->stopTime(__FUNCTION__);
+                return false;
+            }
+        }
         $buffer->rewind();
+        $this->stopTime(__FUNCTION__);
         return $circle;
     }
 
@@ -236,12 +317,15 @@ class GCodeArcOptimiser {
      */
     public function calculateExtrusionError($extrusions)
     {
-        global $extrusion_error;
+        $this->startTime(__FUNCTION__);
+        $extrusionError = sqrt($this->getExtrusionError());
         foreach($extrusions['mm/mm'] as $num => $mm){
-            if(abs($mm-$extrusions['avg']['mm/mm'])/$extrusions['avg']['mm/mm'] > $extrusion_error){
+            if(abs($mm-$extrusions['avg']['mm/mm'])/$extrusions['avg']['mm/mm'] > $extrusionError) {
+                $this->stopTime(__FUNCTION__);
                 return false;
             }
         }
+        $this->stopTime(__FUNCTION__);
         return true;
     }
 
@@ -252,6 +336,7 @@ class GCodeArcOptimiser {
      */
     public function getExtrusionLengths($lines)
     {
+        $this->startTime(__FUNCTION__);
         $extrusions = array(
             'total' => array(
                 'pathlength' => 0,
@@ -269,23 +354,29 @@ class GCodeArcOptimiser {
             'mm/mm'      => array(
             ),
         );
+        $mm         = [];
+        $filament   = 0;
+        $pathlength = 0;
         $lines->rewind();
         $prev = null;
-        foreach($lines as $num => $line){
+        foreach($lines as $line){
             if(!is_null($prev)){
-                $ls = $this->vector_subtract($line, $prev);
-                $lsLength = max($this->vector_magnitude($ls),0.0000001);
-                $extrusions['total']['filament']   += ($line['E']-$prev['E']);
-                $extrusions['total']['pathlength'] += $lsLength;
-                $extrusions['filament'][$num]       = ($line['E']-$prev['E']);
-                $extrusions['pathlength'][$num]     = $lsLength;
-                $extrusions['mm/mm'][$num]          = ($line['E']-$prev['E'])/$lsLength;
+                $eDiff       = $line['E'] - $prev['E'];
+                $lsLength    = $this->vector_subtract_magnitude($line, $prev);
+                $filament   += $eDiff;
+                $pathlength += $lsLength;
+                $mm[]        = ($eDiff)/$lsLength;
             }
             $prev = $line;
         }
-        $extrusions['avg']['filament']   = $extrusions['total']['filament']/$lines->count();
-        $extrusions['avg']['pathlength'] = $extrusions['total']['pathlength']/$lines->count();
-        $extrusions['avg']['mm/mm']      = $extrusions['total']['filament']/$extrusions['total']['pathlength'];
+        $count = $lines->count();
+        $extrusions['mm']                  = $mm;
+        $extrusions['total']['filament']   = $filament;
+        $extrusions['total']['pathlength'] = $pathlength;
+        $extrusions['avg']['filament']     = $filament/$count;
+        $extrusions['avg']['pathlength']   = $pathlength/$count;
+        $extrusions['avg']['mm/mm']        = $filament/$pathlength;
+        $this->stopTime(__FUNCTION__);
         return $extrusions;
     }
 
@@ -296,10 +387,17 @@ class GCodeArcOptimiser {
      */
     public function getLines($buffer)
     {
+        $this->startTime(__FUNCTION__);
         $lines = new SplFixedArray($buffer->count());
-        for($buffer->rewind();$buffer->valid();$buffer->next()){
-            $lines[$buffer->key()] = $this->getCoords($buffer->current());
+        $buffer->rewind();
+        for(;$buffer->valid();$buffer->next()){
+            $cur = $buffer->current();
+            if (!isset($this->lineCache[$cur])) {
+                $this->lineCache[$cur] = $this->getCoords($cur);
+            }
+            $lines[$buffer->key()] = $this->lineCache[$cur];
         }
+        $this->stopTime(__FUNCTION__);
         return $lines;
     }
 
@@ -310,9 +408,11 @@ class GCodeArcOptimiser {
      */
     public function getCircle($lines)
     {
+        $this->startTime(__FUNCTION__);
         $center = $this->getCircleCenterLeastSquares($lines);
 
         if (!$center) {
+            $this->stopTime(__FUNCTION__);
             return false;
         }
 
@@ -322,6 +422,7 @@ class GCodeArcOptimiser {
         $errors = $this->getCircleErrors($center, $center['R'], $lines);
         $direction = $this->getCircleDirection($lines);
 
+        $this->stopTime(__FUNCTION__);
         return array('errors' => $errors, 'radius' => $center['R'], 'center' => $center, 'direction' => $direction);
     }
 
@@ -335,6 +436,7 @@ class GCodeArcOptimiser {
      */
     public function getCircleCenterLeastSquares($lines)
     {
+        $this->startTime(__FUNCTION__);
         $xbar = 0;
         $ybar = 0;
         $lines = $lines->toArray();
@@ -365,18 +467,21 @@ class GCodeArcOptimiser {
         }
 
         if ($Suu == 0) {
+            $this->stopTime(__FUNCTION__);
             return false;
         }
 
         $denominator = (((-($Suv*$Suv))/$Suu)+$Svv);
 
         if ($denominator == 0) {
+            $this->stopTime(__FUNCTION__);
             return false;
         }
 
         $v = ((($Svvv+$Svuu)/2) - (($Suv/2)*(($Suuu+$Suvv)/$Suu)))/$denominator;
         $u = ( (($Suuu+$Suvv)/2) - ($v*$Suv) )/($Suu);
 
+        $this->stopTime(__FUNCTION__);
         return array(
             'X'=> $u+$xbar,
             'Y'=> $v+$ybar,
@@ -393,12 +498,13 @@ class GCodeArcOptimiser {
      */
     public function getCircleErrors($center, $radius, $lines)
     {
+        $this->startTime(__FUNCTION__);
         $errors = array();
         foreach($lines as $line) {
-            $vec = array($center['X'] - $line['X'], $center['Y']-$line['Y']);
-            $length = $this->vector_magnitude($vec);
+            $length = $this->vector_subtract_magnitude($center, $line);
             $errors[] = abs($length-$radius);
         }
+        $this->stopTime(__FUNCTION__);
         return $errors;
     }
 
@@ -409,12 +515,15 @@ class GCodeArcOptimiser {
      */
     public function getCircleDirection($lines)
     {
-        $edge1 = $this->vector_subtract($lines[1], $lines[0]);
-        $edge2 = $this->vector_subtract($lines[2], $lines[1]);
-        $mag = $this->vector_magnitude_cross_product($edge1, $edge2);
+        $this->startTime(__FUNCTION__);
+        $edge1  = $this->vector_subtract($lines[1], $lines[0]);
+        $edge2  = $this->vector_subtract($lines[2], $lines[1]);
+        $mag    = $this->vector_magnitude_cross_product($edge1, $edge2);
         if($mag > 0){
+            $this->stopTime(__FUNCTION__);
             return 'anticlockwise';
         }
+        $this->stopTime(__FUNCTION__);
         return 'clockwise';
     }
 
@@ -426,6 +535,7 @@ class GCodeArcOptimiser {
      */
     public function getCircleRadius($center, $lines)
     {
+        $this->startTime(__FUNCTION__);
         $count = $lines->count();
         $sum   = 0;
         foreach($lines as $line) {
@@ -433,6 +543,7 @@ class GCodeArcOptimiser {
             $length = sqrt(pow($vec[0], 2) + pow($vec[1], 2));
             $sum += $length;
         }
+        $this->stopTime(__FUNCTION__);
         return $sum/$count;
     }
 
@@ -446,6 +557,7 @@ class GCodeArcOptimiser {
      */
     public function getCircleCenter($lines)
     {
+        $this->startTime(__FUNCTION__);
         $ae = $this->getAlignmentError();
         $lines->rewind();
         $dx = 0;
@@ -461,7 +573,10 @@ class GCodeArcOptimiser {
             for($j = $i+1; $j <= $count-2; $j++) {
                 for($k = $j + 1; $k <= $count-1; $k++) {
                     $delta = (($lines[$k]['X'] - $lines[$j]['X'])*($lines[$j]['Y'] - $lines[$i]['Y']))-(($lines[$j]['X'] - $lines[$i]['X'])*($lines[$k]['Y'] - $lines[$j]['Y']));
-                    if($delta === null||$delta === 0) return false;
+                    if($delta === null||$delta === 0) {
+                        $this->stopTime(__FUNCTION__);
+                        return false;
+                    }
                     if(abs($delta) > $ae) {
                         // we know the points are not aligned
                         $x =
@@ -503,6 +618,7 @@ class GCodeArcOptimiser {
                 }
             }
         }
+        $this->stopTime(__FUNCTION__);
         if($q === 0) {
             return false;
         }
@@ -516,6 +632,7 @@ class GCodeArcOptimiser {
      */
     public function getCoords($line)
     {
+        $this->startTime(__FUNCTION__);
         $output = array(
             "X" => null,
             "Y" => null,
@@ -534,6 +651,7 @@ class GCodeArcOptimiser {
         } else if($found === false) {
             exit("AN ERROR OCCURRED WITH THE REGEX IN getCoords");
         }
+        $this->stopTime(__FUNCTION__);
         return $output;
     }
 
@@ -546,13 +664,19 @@ class GCodeArcOptimiser {
      * @return float      The angle in radians
      */
     public function angleBetween($v1, $v2) {
+        $this->startTime(__FUNCTION__);
         $angle = acos( $this->vector_dot_product($v1, $v2) / ($this->vector_magnitude($v1) * $this->vector_magnitude($v2)))  + (3*(M_PI/4));
-        return ($angle > M_PI) ? $angle - M_PI : $angle;
+        $result = ($angle > M_PI) ? $angle - M_PI : $angle;
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     public function vector_dot_product($vector1, $vector2)
     {
-        return (($vector1['X'] * $vector2['X']) + ($vector1['Y'] * $vector2['Y']));
+        $this->startTime(__FUNCTION__);
+        $result = (($vector1['X'] * $vector2['X']) + ($vector1['Y'] * $vector2['Y']));
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     /**
@@ -562,7 +686,30 @@ class GCodeArcOptimiser {
      */
     public function vector_magnitude($vector)
     {
-        return sqrt(array_reduce($vector, function($carry, $item){ return $carry + pow($item,2);}, 0));
+        $this->startTime(__FUNCTION__);
+        $sum = 0;
+        foreach ($vector as $component) {
+            $sum += ($component * $component);
+        }
+        $result = sqrt($sum);
+        $this->stopTime(__FUNCTION__);
+        return $result;
+    }
+
+    public function vector_subtract_magnitude($vector1, $vector2)
+    {
+        $this->startTime(__FUNCTION__);
+        $result = sqrt((($vector1['X'] - $vector2['X']) * ($vector1['X'] - $vector2['X']) + ($vector1['Y'] - $vector2['Y']) * ($vector1['Y'] - $vector2['Y'])));
+        $this->stopTime(__FUNCTION__);
+        return $result;
+    }
+
+    public function vector_subtract_magnitude2($vector1, $vector2)
+    {
+        $this->startTime(__FUNCTION__);
+        $result = ((($vector1['X'] - $vector2['X']) * ($vector1['X'] - $vector2['X']) + ($vector1['Y'] - $vector2['Y']) * ($vector1['Y'] - $vector2['Y'])));
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     /**
@@ -573,7 +720,10 @@ class GCodeArcOptimiser {
      */
     public function vector_add($vector1, $vector2)
     {
-        return array('X' => $vector1['X']+$vector2['X'], 'Y' => $vector1['Y']+$vector2['Y']);
+        $this->startTime(__FUNCTION__);
+        $result = array('X' => $vector1['X']+$vector2['X'], 'Y' => $vector1['Y']+$vector2['Y']);
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     /**
@@ -584,7 +734,10 @@ class GCodeArcOptimiser {
      */
     public function vector_subtract($vector1, $vector2)
     {
-        return array('X' => $vector1['X']-$vector2['X'], 'Y' => $vector1['Y']-$vector2['Y']);
+        $this->startTime(__FUNCTION__);
+        $result = array('X' => $vector1['X']-$vector2['X'], 'Y' => $vector1['Y']-$vector2['Y']);
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     /**
@@ -595,12 +748,18 @@ class GCodeArcOptimiser {
      */
     public function vector_abs_subtract($vector1, $vector2)
     {
-        return array('X' => abs($vector1['X']-$vector2['X']), 'Y' => abs($vector1['Y']-$vector2['Y']));
+        $this->startTime(__FUNCTION__);
+        $result = array('X' => abs($vector1['X']-$vector2['X']), 'Y' => abs($vector1['Y']-$vector2['Y']));
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     public function vector_magnitude_cross_product($vector1, $vector2)
     {
-        return ($vector1['X']*$vector2['Y']) - ($vector1['Y']*$vector2['X']);
+        $this->startTime(__FUNCTION__);
+        $result = ($vector1['X']*$vector2['Y']) - ($vector1['Y']*$vector2['X']);
+        $this->stopTime(__FUNCTION__);
+        return $result;
     }
 
     /**
@@ -610,6 +769,7 @@ class GCodeArcOptimiser {
      */
     public function parseGcode($gcode)
     {
+        $this->startTime(__FUNCTION__);
         $output = array();
         $gcode->rewind();
 
@@ -618,6 +778,7 @@ class GCodeArcOptimiser {
             $output[] = parseLine($gcode->current());
         }
 
+        $this->stopTime(__FUNCTION__);
         return array_filter($output);
     }
 
@@ -639,6 +800,7 @@ class GCodeArcOptimiser {
      */
     public function parseLine($line, $skipNonMoves = true)
     {
+        $this->startTime(__FUNCTION__);
         $out = array(
             "command" => null,
             "arguments" => array(),
@@ -657,6 +819,7 @@ class GCodeArcOptimiser {
         if($skipNonMoves){
             $match = '/^(G0|G1|G2|G3|G90|G91|G92|M82|M83|G28)/';
             if(preg_match($match, $line) === 0){
+                $this->stopTime(__FUNCTION__);
                 return false;
             }
         }
@@ -665,6 +828,7 @@ class GCodeArcOptimiser {
         foreach($parts as $part){
             $out['arguments'][$part[0]] = floatval(substr($part,1));
         }
+        $this->stopTime(__FUNCTION__);
         return $out;
     }
 
